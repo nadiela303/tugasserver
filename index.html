@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LKPD: Manajemen Server VPS AWS - Fase 1</title>
+    <style>
+        :root {
+            --primary: #7e67b8;
+            --primary-soft: #f3effc;
+            --primary-hover: #6952a3;
+            --border: #ddd6fe;
+            --bg-body: #faf8ff;
+            --text-dark: #2e2a3b;
+            --text-muted: #6e6880;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 35px 40px;
+            border-radius: 14px;
+            box-shadow: 0 6px 20px rgba(126, 103, 184, 0.08);
+            border-top: 5px solid #b8a4e8;
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 1.5px solid var(--primary-soft);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        header h1 {
+            margin: 0;
+            color: var(--primary);
+            font-size: 24px;
+        }
+
+        header p {
+            margin: 6px 0 0;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .status-save {
+            display: inline-block;
+            margin-top: 9px;
+            font-size: 12px;
+            color: #4c3f75;
+            background: var(--primary-soft);
+            border: 1px solid var(--border);
+            padding: 3px 12px;
+            border-radius: 999px;
+        }
+
+        .identitas-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px 30px;
+            background-color: #f8f5ff;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            border-left: 4px solid #a78bfa;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            min-width: 90px;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .form-group input {
+            flex: 1;
+            padding: 7px 10px;
+            border: 1px solid #d8cef0;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #ffffff;
+            color: var(--text-dark);
+        }
+
+        .form-group input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #9f87dc;
+            box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.16);
+        }
+
+        section {
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 18px;
+            color: var(--primary);
+            background: var(--primary-soft);
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+        }
+
+        p.instruksi {
+            font-size: 14px;
+            margin-top: 0;
+            margin-bottom: 14px;
+            color: var(--text-dark);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .card-konsep {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            background: #fcfaff;
+        }
+
+        .card-konsep label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #5b488c;
+            font-size: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 105px;
+            padding: 10px;
+            border: 1px solid #d8cef0;
+            border-radius: 7px;
+            font-size: 14px;
+            resize: vertical;
+            background: #ffffff;
+            color: var(--text-dark);
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn-print, .btn-reset {
+            border: none;
+            padding: 10px 16px;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-print {
+            background-color: #8b74c7;
+            color: #ffffff;
+        }
+
+        .btn-print:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-reset {
+            background-color: #f3effc;
+            color: #5b488c;
+            border: 1px solid var(--border);
+        }
+
+        .btn-reset:hover {
+            background-color: #e7dffb;
+        }
+
+        @media (max-width: 650px) {
+            .identitas-box, .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                border-top: none;
+                padding: 0;
+            }
+            .action-bar, .status-save {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="action-bar">
+        <button type="button" class="btn-reset" onclick="resetForm()">Kosongkan Isian</button>
+        <button type="button" class="btn-print" onclick="window.print()">Cetak / Simpan PDF</button>
+    </div>
+
+    <header>
+        <h1>LKPD: Manajemen Server VPS AWS</h1>
+        <p>Modul Praktik AWS Cloud &bull; Administrasi Sistem Jaringan / Komputasi Awan</p>
+        <span id="save-status" class="status-save">Tersimpan otomatis di browser</span>
+    </header>
+
+    <div class="identitas-box">
+        <div class="form-group">
+            <label for="nama">Nama</label>
+            <span>:</span>
+            <input type="text" id="nama" value="Nadiela Muthiara Ulfa Hariyanto">
+        </div>
+        <div class="form-group">
+            <label for="tanggal">Tanggal</label>
+            <span>:</span>
+            <input type="date" id="tanggal" value="2026-11-19">
+        </div>
+        <div class="form-group">
+            <label for="kelas">Kelas</label>
+            <span>:</span>
+            <input type="text" id="kelas" value="XI RPL">
+        </div>
+        <div class="form-group">
+            <label for="instruktur">Instruktur</label>
+            <span>:</span>
+            <input type="text" id="instruktur" value="Pak Asep Ulumudin">
+        </div>
+    </div>
+
+    <section>
+        <h2>Fase 1: Pengenalan Konsep VPS & Cloud</h2>
+        <p class="instruksi">Jelaskan secara singkat pemahaman Anda mengenai perbedaan layanan berikut dengan mengisi kotak yang tersedia.</p>
+        <div class="grid-2">
+            <div class="card-konsep">
+                <label for="shared">Shared Hosting</label>
+                <textarea id="shared">Satu server fisik dibagi untuk banyak website sekaligus. Sumber daya seperti CPU, RAM, dan penyimpanan dipakai bersama, lebih hemat biaya tetapi performa bisa terpengaruh situs lain.</textarea>
+            </div>
+            <div class="card-konsep">
+                <label for="dedicated">Dedicated Server</label>
+                <textarea id="dedicated">Satu server fisik utuh disewakan khusus untuk satu pengguna atau organisasi. Performa dan kontrol penuh, tetapi biaya lebih mahal dan pengelolaan server lebih banyak.</textarea>
+            </div>
+            <div class="card-konsep">
+                <label for="lightsail">Amazon Lightsail</label>
+                <textarea id="lightsail">Layanan VPS dari AWS yang lebih sederhana dan paket biayanya sudah terprediksi. Cocok untuk website atau aplikasi skala kecil-menengah dengan konfigurasi yang lebih ringkas.</textarea>
+            </div>
+            <div class="card-konsep">
+                <label for="ec2">Amazon EC2</label>
+                <textarea id="ec2">Layanan server virtual (VPS) di AWS yang sangat fleksibel. Pengguna bisa memilih AMI, tipe instans, penyimpanan, jaringan, dan keamanan secara lebih rinci sesuai kebutuhan.</textarea>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    const STORAGE_KEY = 'lkpd_vps_aws_nadiela_fase1_kalem_v1';
+    const fields = document.querySelectorAll('input, textarea, select');
+    const statusEl = document.getElementById('save-status');
+
+    function saveData() {
+        const data = {};
+        fields.forEach((el, index) => {
+            const key = el.id || `field_${index}`;
+            data[key] = el.type === 'checkbox' ? el.checked : el.value;
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        if (statusEl) {
+            statusEl.textContent = 'Tersimpan otomatis di browser';
+        }
+    }
+
+    function loadData() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        try {
+            const data = JSON.parse(raw);
+            fields.forEach((el, index) => {
+                const key = el.id || `field_${index}`;
+                if (Object.prototype.hasOwnProperty.call(data, key)) {
+                    if (el.type === 'checkbox') {
+                        el.checked = Boolean(data[key]);
+                    } else {
+                        el.value = data[key];
+                    }
+                }
+            });
+        } catch (err) {
+            console.error('Gagal memuat data tersimpan:', err);
+        }
+    }
+
+    function resetForm() {
+        if (confirm('Yakin ingin mengosongkan semua isian LKPD?')) {
+            localStorage.removeItem(STORAGE_KEY);
+            fields.forEach(el => {
+                if (el.type === 'checkbox') {
+                    el.checked = false;
+                } else {
+                    el.value = '';
+                }
+            });
+            if (statusEl) {
+                statusEl.textContent = 'Isian dikosongkan';
+            }
+        }
+    }
+
+    fields.forEach(el => {
+        el.addEventListener('input', saveData);
+        el.addEventListener('change', saveData);
+    });
+
+    loadData();
+</script>
+
+</body>
+</html>
